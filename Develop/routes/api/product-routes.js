@@ -4,15 +4,37 @@ const { Product, Category, Tag, ProductTag } = require('../../models');
 // The `/api/products` endpoint
 
 // get all products
-router.get('/', (req, res) => {
+router.get('/', (_, res) => {
   // find all products
   // be sure to include its associated Category and Tag data
+  Product.findAll({
+    include: [Category],
+    include: [Tag]
+  }).then(data => {
+    res.json(data)
+  })
+  .catch((err) => {
+    res.status(500).json({ message: err.message });
+  });
 });
 
 // get one product
 router.get('/:id', (req, res) => {
   // find a single product by its `id`
   // be sure to include its associated Category and Tag data
+  Product.findOne({
+    include: [Category],
+    include: [Tag],
+    where: {
+      id: req.params.id
+    }
+  }).then(data => {
+    if(data) {
+      res.json(data)
+    } else {
+      res.status(404).json({ message: `Product with id ${data} not found` });
+    }
+  })
 });
 
 // create new product
@@ -91,6 +113,20 @@ router.put('/:id', (req, res) => {
 
 router.delete('/:id', (req, res) => {
   // delete one product by its `id` value
+  Product.destroy({
+    where: {
+      id: req.params.id
+    }
+  }).then(data => {
+    if (!data) {
+      res.status(404).json({message: `No category with id ${req.params.id}`})
+    } else {
+      res.json("Product Deleted")
+    }  
+  })
+  .catch((err) => {
+    res.status(500).json({ message: err.message });
+  });
 });
 
 module.exports = router;

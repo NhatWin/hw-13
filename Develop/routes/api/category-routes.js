@@ -9,7 +9,6 @@ router.get('/', (_, res) => {
   Category.findAll({
     include: [Product]
   }).then(data => {
-
     res.json(data)
   })
   .catch((err) => {
@@ -54,7 +53,7 @@ router.put('/:id', (req, res) => {
     }
   }).then(data => {
     if (!data) {
-      res.status(404).json({message: `No category with id ${req.params.id}`})
+      
     } else {
       res.json("Category Updated")
     }
